@@ -240,7 +240,7 @@ print(67 * '\033[1;92m=')
 print("email/number:")
 user =pick()
 print("\033[1;92mpassword if gotten")
-userpass = "aknown.anonymous"
+userpass = pick()
 print('\npassword to change = {}'.format(userpass))
 CODIE = machine_generator()
 if __name__=="__main__":
