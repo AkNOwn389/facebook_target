@@ -248,4 +248,4 @@ if __name__=="__main__":
   if send_req():
     p=ThreadPool(150)
     p.map(hackie, range(150))
-    print("\033[1;97m DONE FUCKING FACEBOOK")
+    print("\033[1;97m DONE")
