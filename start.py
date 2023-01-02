@@ -225,7 +225,10 @@ def hackie(arg):
         body, url = elsi(web, body)
         header['Referer'] = web.url
         cookie = session.cookies.get_dict()
-        codelist.remove(str(pin))
+        try:
+          codelist.remove(str(pin))
+        except:
+          pass
         total+=1
     except:
       pass
