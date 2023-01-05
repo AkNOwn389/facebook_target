@@ -38,7 +38,6 @@ def get_data():
   COOKIES, URL, rd = form()
   header['Referer'] = rd
   web=session.get(URL, headers=header, cookies=COOKIES)
-  cookies=dict()
   FORM={"lsd":"AVqTGX-hM9Y","jazoest":"2879","email":"1234","did_submit":"Maghanap"}
   URL=("https://m.facebook.com:443"+re.findall(r'<form method="post" action="(.*?)" id=', web.text).pop(0))
   FORM["lsd"]=re.findall(r'name="lsd" value="(.*?)"', web.text).pop(0)
