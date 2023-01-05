@@ -88,7 +88,7 @@ def search():
           else:
             print("\033[1;92m No recover method found")
             input()
-            sys.exit()
+            os.system("exit")
         except:
           print("\033[1;92m No recover method found")
           input()
