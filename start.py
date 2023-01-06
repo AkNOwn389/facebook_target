@@ -218,7 +218,7 @@ def hackie(arg):
   cookie = json.loads(open("cookies.json", "r").read())
   header['Referer']=open("cache.txt", "r").read()
   url = open("url.txt", "r").read()
-  pin = codelist.pop(random.randint(0, len(codelist)))
+  pin = codelist.pop(random.randint(0, 500))
   while bool(RUN) == True:
     try:
       if len(codelist) == 1000000:
